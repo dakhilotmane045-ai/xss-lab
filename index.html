@@ -1,41 +1,59 @@
 <!DOCTYPE html>
-<html>
-<head><title>Otmane XSS Lab</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OT-M4N3 | XSS Lab V2 - Morocco</title>
 <style>
-body{background:#0d1117;color:#fff;font-family:Arial;padding:20px}
-.box{background:#161b22;padding:15px;margin:15px 0;border-radius:10px;border:1px solid #333}
-input{width:95%;padding:10px;margin:10px 0}
-button{background:#238636;color:white;padding:10px 15px;border:0;border-radius:5px}
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;font-family:'JetBrains Mono',monospace}
+body{background:#000;color:#0f0;overflow-x:hidden;min-height:100vh;position:relative}
+canvas#matrix{position:fixed;top:0;left:0;z-index:0;width:100%;height:100%}
+.container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:20px}
+.header{text-align:center;border:2px solid #0f0;padding:20px;background:rgba(0,20,0,0.9);box-shadow:0 0 30px #0f0;margin-bottom:20px}
+.header h1{font-size:28px;text-shadow:0 0 10px #0f0}
+.stats{display:flex;justify-content:space-around;background:rgba(0,20,0,0.9);border:1px solid #0f0;padding:15px;margin-bottom:20px}
+.stats b{color:#ff0;font-size:24px}
+.lab{background:rgba(0,15,0,0.92);border:1px solid #0f0;padding:20px;margin-bottom:20px}
+.lab.solved{border-color:#ff0;box-shadow:0 0 25px #ff0}
+.badge{background:#0f0;color:#000;padding:2px 8px;font-size:12px;margin-left:10px}
+.badge.done{background:#ff0}
+input,textarea{width:100%;background:#000;border:1px solid #0f0;color:#0f0;padding:10px;margin:10px 0}
+button{background:#000;color:#0f0;border:1px solid #0f0;padding:10px 20px;cursor:pointer;margin:5px}
+button:hover{background:#0f0;color:#000}
+.flag-box{border:2px solid #ff0;background:rgba(40,40,0,0.9);padding:20px;text-align:center;display:none}
+.flag-box.show{display:block}
 </style>
 </head>
 <body>
-<h1>🔥 Otmane XSS Lab - Morocco 🇲🇦</h1>
-
-<div class="box">
-<h3>1- Reflected XSS</h3>
-<input id="s" placeholder='Payload: <img src=x onerror=alert(1)>'>
-<button onclick="document.getElementById('o').innerHTML=document.getElementById('s').value">Test</button>
-<div id="o" style="margin-top:10px;color:yellow"></div>
+<canvas id="matrix"></canvas>
+<div class="container">
+<div class="header">
+<div style="font-size:40px">🇲🇦</div>
+<h1>OT-M4N3 // XSS LAB V2</h1>
+<div style="color:#0ff">Matrix Edition - Made by Otmane from Aït Lazza</div>
 </div>
-
-<div class="box">
-<h3>2- DOM XSS via URL</h3>
-<p>Zid f URL: ?xss=&lt;svg onload=alert(document.domain)&gt;</p>
-<div id="d"></div>
+<div class="stats">
+<div>Score<br><b id="score">0</b>/4</div>
+<div>Status<br><b id="status">NOOB</b></div>
+<div>Country<br><b>🇲🇦 MA</b></div>
+</div>
+<div class="lab" id="lab1"><h2>[1] Reflected XSS <span class="badge" id="b1">LOCKED</span></h2><input id="i1" placeholder="Enter payload"><button onclick="test1()">EXECUTE</button><div id="r1" style="margin-top:15px;padding:10px;border:1px solid #333"></div></div>
+<div class="lab" id="lab2"><h2>[2] DOM XSS <span class="badge" id="b2">LOCKED</span></h2><input id="i2" placeholder="?xss=payload"><button onclick="test2()">EXECUTE</button><div id="r2" style="margin-top:15px;padding:10px;border:1px solid #333"></div></div>
+<div class="lab" id="lab3"><h2>[3] Stored XSS <span class="badge" id="b3">LOCKED</span></h2><textarea id="i3" placeholder="Comment payload"></textarea><button onclick="test3()">POST</button><div id="r3" style="margin-top:15px"></div></div>
+<div class="lab" id="lab4"><h2>[4] Filter Bypass HARD <span class="badge" id="b4">LOCKED</span></h2><input id="i4" placeholder="Bypass filter..."><button onclick="test4()">BYPASS</button><div id="r4" style="margin-top:15px;padding:10px;border:1px solid #333"></div></div>
+<div class="flag-box" id="flagBox"><h2>🏆 CONGRATS OT-M4N3!</h2><p style="font-size:20px;color:#ff0;background:#000;padding:10px;margin-top:10px">FLAG{Otmane_Morocco_XSS_King_2026}</p></div>
+</div>
 <script>
-let x=new URLSearchParams(location.search).get('xss');
-if(x)document.getElementById('d').innerHTML=x;
+const c=document.getElementById('matrix'),ctx=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;const cols=Math.floor(c.width/14),drops=Array(cols).fill(0);function draw(){ctx.fillStyle='rgba(0,0,0,0.05)';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#0f0';ctx.font='14px monospace';drops.forEach((y,i)=>{ctx.fillText(String(Math.floor(Math.random()*2)),i*14,y*14);if(y*14>c.height&&Math.random()>0.975)drops[i]=0;drops[i]++})}setInterval(draw,35);
+let solved=[false,false,false,false];function updateScore(){let s=solved.filter(x=>x).length;document.getElementById('score').innerText=s;let t=['NOOB','KIDDIE','HACKER','ELITE','GOD 🇲🇦'];document.getElementById('status').innerText=t[s];if(s==4)document.getElementById('flagBox').classList.add('show')}function win(n){if(!solved[n]){solved[n]=true;document.getElementById('b'+(n+1)).innerText='PWNED';document.getElementById('b'+(n+1)).classList.add('done');document.getElementById('lab'+(n+1)).classList.add('solved');updateScore()}}
+const origAlert=window.alert;window.alert=function(m){origAlert(m);for(let i=1;i<=4;i++){if(document.getElementById('i'+i).value.includes('alert')||document.getElementById('i'+i).value.includes('onerror'))win(i-1)}return true};window.confirm=function(m){origAlert(m);for(let i=1;i<=4;i++)if(document.getElementById('i'+i).value)win(i-1);return true};
+function test1(){let v=document.getElementById('i1').value,r=document.getElementById('r1');r.innerHTML='Result: '+v;if(v.includes('<'))win(0)}
+function test2(){let p=new URLSearchParams(location.search).get('xss')||document.getElementById('i2').value;document.getElementById('r2').innerHTML='DOM: '+p;if(p&&p.includes('<'))win(1)}
+(function(){let p=new URLSearchParams(location.search).get('xss');if(p){document.getElementById('i2').value=p;document.getElementById('r2').innerHTML='DOM: '+p;if(p.includes('<'))win(1)}})();
+function loadComments(){let a=JSON.parse(localStorage.getItem('xss_comments')||'[]'),r=document.getElementById('r3');r.innerHTML='';a.forEach(c=>{let d=document.createElement('div');d.style.border='1px solid #333';d.style.padding='8px';d.style.margin='5px 0';d.innerHTML=c;r.appendChild(d);if(c.includes('<'))win(2)})}
+function test3(){let v=document.getElementById('i3').value;if(!v)return;let a=JSON.parse(localStorage.getItem('xss_comments')||'[]');a.push(v);localStorage.setItem('xss_comments',JSON.stringify(a));loadComments()}loadComments();
+function test4(){let v=document.getElementById('i4').value,r=document.getElementById('r4'),f=v.replace(/<script/gi,'').replace(/alert\s*\(/gi,'BLOCKED(');r.innerHTML='Filtered: '+f+'<div>'+f+'</div>';if(f.includes('onerror')||f.includes('onload')||f.includes('confirm')||f.includes('`'))win(3)}
 </script>
-</div>
-
-<div class="box">
-<h3>3- Stored (Local)</h3>
-<input id="c" placeholder="comment">
-<button onclick="localStorage.setItem('c',document.getElementById('c').value);location.reload()">Save</button>
-<div id="cc"></div>
-<script>document.getElementById('cc').innerHTML=localStorage.getItem('c')||''</script>
-</div>
-
-<p>By dakhilotmane045-ai - For Learning Only</p>
 </body>
 </html>
