@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head><title>Otmane XSS Lab</title>
+<style>
+body{background:#0d1117;color:#fff;font-family:Arial;padding:20px}
+.box{background:#161b22;padding:15px;margin:15px 0;border-radius:10px;border:1px solid #333}
+input{width:95%;padding:10px;margin:10px 0}
+button{background:#238636;color:white;padding:10px 15px;border:0;border-radius:5px}
+</style>
+</head>
+<body>
+<h1>🔥 Otmane XSS Lab - Morocco 🇲🇦</h1>
+
+<div class="box">
+<h3>1- Reflected XSS</h3>
+<input id="s" placeholder='Payload: <img src=x onerror=alert(1)>'>
+<button onclick="document.getElementById('o').innerHTML=document.getElementById('s').value">Test</button>
+<div id="o" style="margin-top:10px;color:yellow"></div>
+</div>
+
+<div class="box">
+<h3>2- DOM XSS via URL</h3>
+<p>Zid f URL: ?xss=&lt;svg onload=alert(document.domain)&gt;</p>
+<div id="d"></div>
+<script>
+let x=new URLSearchParams(location.search).get('xss');
+if(x)document.getElementById('d').innerHTML=x;
+</script>
+</div>
+
+<div class="box">
+<h3>3- Stored (Local)</h3>
+<input id="c" placeholder="comment">
+<button onclick="localStorage.setItem('c',document.getElementById('c').value);location.reload()">Save</button>
+<div id="cc"></div>
+<script>document.getElementById('cc').innerHTML=localStorage.getItem('c')||''</script>
+</div>
+
+<p>By dakhilotmane045-ai - For Learning Only</p>
+</body>
+</html>
